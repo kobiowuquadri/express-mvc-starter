@@ -1,5 +1,5 @@
 // Authorise User
-const jwt = require('jsonwebtoken')
+import jwt from 'jsonwebtoken'
 
 export const verify = (req, res, next) => {
   
