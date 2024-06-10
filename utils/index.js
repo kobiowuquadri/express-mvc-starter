@@ -50,9 +50,9 @@ const COUNTRY_CODE = "234"
 export const passwordValidator = value => {
   const criteria =
     /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@#$%^&*!])[A-Za-z\d@#$%^&*!]{8,}$/
-  console.log('Password to Validate:', value)
+  // console.log('Password to Validate:', value)
   const isValid = criteria.test(value)
-  console.log('Password Validation Result:', isValid)
+  // console.log('Password Validation Result:', isValid)
   return isValid
 }
 
