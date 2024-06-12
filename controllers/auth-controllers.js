@@ -63,33 +63,33 @@ export const registerUser = async (req, res) => {
   }
 }
 
-const loginUser = async (req, res) => {
+export const loginUser = async (req, res) => {
   try {
     const { email, password } = req.body
-    const checkUser = await User.findOne({ email })
+    const user = await authModel.findOne({ email })
 
-    if (!checkUser) {
-      return res.status(404).json({ success: false, message: 'user not found' })
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'user with the email or password not found' })
     }
-    const checkPassword = await bcrypt.compare(password, checkUser.password)
+    const checkPassword = await bcrypt.compare(password, user.password)
     if (!checkPassword) {
       return res
         .status(401)
         .json({ success: false, message: 'Invalid Password' })
     }
     jwt.sign(
-      { id: checkUser._id },
+      { id: user._id },
       process.env.SECRET,
       { expiresIn: '1hr' },
       async (err, token) => {
         if (err) {
           throw err
         }
-        res.cookie('userId', checkUser._id, { maxAge: period, httpOnly: true })
+        res.cookie('userId', user._id, { maxAge: period, httpOnly: true })
         res.status(200).json({
           success: true,
           message: 'User Login Successfully',
-          checkUser,
+          user,
           token
         })
       }
