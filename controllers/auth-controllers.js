@@ -6,6 +6,7 @@ import { cloudinary, sendEmail } from '../utils'
 import jwt from 'jsonwebtoken'
 
 const period = 60 * 60 * 24 * 3
+const baseUrl = 'http://localhost:5000'
 
 
 export const registerUser = async (req, res) => {
@@ -101,3 +102,46 @@ export const loginUser = async (req, res) => {
     handleErrors(error, res)
   }
 }
+
+
+export const forgetPassword = async (req, res) => {
+  try {
+    const { email } = req.body
+    // check if email exists
+    const existingEmail = await authModel.findOne({email})
+    if(!existingEmail){
+      return res.status(404).json({success: false, message: "User with this email does not exist."})
+    }
+    const token = jwt.sign({email : existingEmail.email, id: existingEmail._id}, process.env.SECRET, {
+      expiresIn: "5m"
+    })
+    const link = `${baseUrl}/reset-password/${existingEmail._id}/${token}`
+
+    const subject = 'Reset Your Password'
+    const text = 'Reset Your Password!'
+    const template = 'forgetPassword'
+    const context = {
+      resetLink: link
+    }    
+    await sendEmail(email, text, subject, template, context)
+    res.status(200).json({success: true, message: "Reset link successfully sent, kindly check your email to set a new password"})
+  }
+  catch(error){
+    handleErrors(error, res)
+  }
+}
+
+export const resetPassword = async (req, res) => {
+try {
+  const {id, token} = req.body
+  const exisintigId = await authModel.findOne({_id: id})
+  if(!exisintigId){
+    return res.status(400).json({success: false, message: "User does not exists."})
+  }
+  jwt.verify(token, process.env.SECRET) 
+}
+catch(error){
+  handleErrors(error, res)
+}
+}
+
