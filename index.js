@@ -17,7 +17,7 @@ app.use(helmet());
 app.use(morgan('tiny'))
 
 let limiter = rateLimit({
-  max: 3,
+  max: 1000,
   windowMs: 60 * 60 * 1000,
   message: "We have received too many requests from this IP. Please try again after one hour."
 })

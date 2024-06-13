@@ -6,7 +6,7 @@ import { cloudinary, sendEmail } from '../utils'
 import jwt from 'jsonwebtoken'
 
 const period = 60 * 60 * 24 * 3
-const baseUrl = 'http://localhost:5000'
+const baseUrl = 'http://localhost:5000/api/v1/auth'
 
 
 export const registerUser = async (req, res) => {
@@ -133,7 +133,7 @@ export const forgetPassword = async (req, res) => {
 
 export const resetPassword = async (req, res) => {
 try {
-  const {id, token} = req.body
+  const {id, token} = req.params
   const exisintigId = await authModel.findOne({_id: id})
   if(!exisintigId){
     return res.status(400).json({success: false, message: "User does not exists."})
@@ -145,3 +145,24 @@ catch(error){
 }
 }
 
+export const postResetPassword = async (req, res) => {
+  try {
+  const {id, token} = req.params
+  const { password } = req.body
+  const exisintigId = await authModel.findOne({_id: id})
+  if(!exisintigId){
+    return res.status(400).json({success: false, message: "User does not exists."})
+  }
+  jwt.verify(token, process.env.SECRET) 
+  const hashPassword = await bcrypt.hash(password, 10)  
+  await authModel.updateOne({_id: id}, {
+    $set : {
+      password: hashPassword
+    }
+  })
+  res.status(201).json({success: true, message: "Password changed successfully"})
+}
+catch(error){
+  handleErrors(error, res)
+}
+}
