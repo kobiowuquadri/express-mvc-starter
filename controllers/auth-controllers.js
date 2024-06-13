@@ -131,14 +131,15 @@ export const forgetPassword = async (req, res) => {
   }
 }
 
-export const resetPassword = async (req, res) => {
+export const getResetPassword = async (req, res) => {
 try {
   const {id, token} = req.params
-  const exisintigId = await authModel.findOne({_id: id})
-  if(!exisintigId){
-    return res.status(400).json({success: false, message: "User does not exists."})
+  const exisintigUser = await authModel.findOne({_id: id})
+  if(!exisintigUser){
+    return res.status(404).json({success: false, message: "User does not exists."})
   }
   jwt.verify(token, process.env.SECRET) 
+  res.status(200).json({success: true, message: "Reset password link is valid."})
 }
 catch(error){
   handleErrors(error, res)
@@ -149,9 +150,9 @@ export const postResetPassword = async (req, res) => {
   try {
   const {id, token} = req.params
   const { password } = req.body
-  const exisintigId = await authModel.findOne({_id: id})
-  if(!exisintigId){
-    return res.status(400).json({success: false, message: "User does not exists."})
+  const exisintigUser = await authModel.findOne({_id: id})
+  if(!exisintigUser){
+    return res.status(404).json({success: false, message: "User does not exists."})
   }
   jwt.verify(token, process.env.SECRET) 
   const hashPassword = await bcrypt.hash(password, 10)  
