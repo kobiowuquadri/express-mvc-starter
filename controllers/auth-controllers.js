@@ -3,6 +3,9 @@ import { passwordValidator, verifyPhoneNumber, sanitizePhoneNumber } from '../ut
 import { handleErrors } from '../middlewares/errorHandler'
 import { authModel } from '../models/auth-model'
 import { cloudinary, sendEmail } from '../utils'
+import jwt from 'jsonwebtoken'
+
+const period = 60 * 60 * 24 * 3
 
 
 export const registerUser = async (req, res) => {

@@ -7,6 +7,7 @@ import { authRoutes } from './routes/auth-routes'
 import helmet from 'helmet'
 import cors from 'cors'
 import morgan from 'morgan'
+import rateLimit from 'express-rate-limit'
 
 const app = express()
 const port = process.env.PORT
@@ -15,7 +16,15 @@ const port = process.env.PORT
 app.use(helmet());
 app.use(morgan('tiny'))
 
+let limiter = rateLimit({
+  max: 3,
+  windowMs: 60 * 60 * 1000,
+  message: "We have received too many requests from this IP. Please try again after one hour."
+})
+
+
 // middlewares
+app.use('/api', limiter)
 app.use(express.json())
 app.use(express.urlencoded({extended: true}))
 
