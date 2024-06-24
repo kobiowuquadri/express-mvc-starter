@@ -1,9 +1,9 @@
 import dotenv from 'dotenv'
 dotenv.config()
 import express from 'express'
-import { connectToDB } from './database/db'
-import { handleErrors } from './middlewares/errorHandler'
-import { authRoutes } from './routes/auth-routes'
+import { connectToDB } from './database/db.js'
+import { handleErrors } from './middlewares/errorHandler.js'
+import { authRoutes } from './routes/auth-routes.js'
 import helmet from 'helmet'
 import cors from 'cors'
 import morgan from 'morgan'

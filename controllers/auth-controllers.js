@@ -1,8 +1,7 @@
 import bcrypt from 'bcryptjs'
-import { passwordValidator, verifyPhoneNumber, sanitizePhoneNumber } from '../utils'
-import { handleErrors } from '../middlewares/errorHandler'
-import { authModel } from '../models/auth-model'
-import { cloudinary, sendEmail } from '../utils'
+import { passwordValidator, sanitizePhoneNumber, cloudinary, sendEmail } from '../utils/index.js'
+import { handleErrors } from '../middlewares/errorHandler.js'
+import { authModel } from '../models/auth-model.js'
 import jwt from 'jsonwebtoken'
 
 const period = 60 * 60 * 24 * 3

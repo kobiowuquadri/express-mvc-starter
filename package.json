@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "This is a starter template for building MVC (Model-View-Controller) applications using Express.js.",
   "main": "index.js",
+  "type": "module",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "concurrently -n server -c #32a852 \"nodemon --exec babel-node index.js\"",
