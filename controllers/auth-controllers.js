@@ -5,7 +5,7 @@ import { authModel } from '../models/auth-model.js'
 import jwt from 'jsonwebtoken'
 
 const period = 60 * 60 * 24 * 3
-const baseUrl = 'http://localhost:5000/api/v1/auth'
+const baseUrl = 'https://express-mvc-starter.onrender.com/api/v1/auth'
 
 
 export const registerUser = async (req, res) => {
