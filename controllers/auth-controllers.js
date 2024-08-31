@@ -37,13 +37,26 @@ export const registerUser = async (req, res) => {
 
     let imageUrl = authModel.schema.path('profilePics').defaultValue
     if (req.file && req.file.path){
-      const uploadRes = await cloudinary.uploader.upload(req.file.path, {
-        upload_preset: 'express-mvc-starter'
-      })
+        // Upload file to Cloudinary using a stream
+        const streamUpload = (file) => {
+          return new Promise((resolve, reject) => {
+            const stream = cloudinary.uploader.upload_stream((err, result) => {
+              if (result) {
+                resolve(result)
+              } else {
+                reject(err)
+              }
+            })
+            stream.end(file.buffer)
+          })
+        } 
+       const uploadRes = await streamUpload(req.file)
   
        imageUrl = uploadRes.secure_url
     }
     
+
+
 
     const newUser = authModel({
       email,
