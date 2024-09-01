@@ -11,6 +11,7 @@ const baseUrl = 'https://express-mvc-starter.onrender.com/api/v1/auth'
 export const registerUser = async (req, res) => {
   try {
     const { email, password, phoneNumber } = req.body    
+    console.log(req.body)
 
     const existingUser = await authModel.findOne({ email })
     if (existingUser) {
@@ -36,7 +37,7 @@ export const registerUser = async (req, res) => {
     const hashPassword = await bcrypt.hash(password, 10)  
 
     let imageUrl = authModel.schema.path('profilePics').defaultValue
-    if (req.file && req.file.path){
+    if (req.file){
         // Upload file to Cloudinary using a stream
         const streamUpload = (file) => {
           return new Promise((resolve, reject) => {
@@ -69,11 +70,11 @@ export const registerUser = async (req, res) => {
     const text = 'Thank you for registering with us!'
     const template = 'welcomeMessage'    
 
-    const savedUser = await newUser.save()
+    const user = await newUser.save()
     await sendEmail(email, subject, text, template)
     res
       .status(201)
-      .json({ success: true, message: 'Account Created Successfully', savedUser })
+      .json({data : { success: true, message: 'Account Created Successfully', user }})
   } catch (error) {
     handleErrors(error, res)
   }
@@ -103,10 +104,12 @@ export const loginUser = async (req, res) => {
         }
         res.cookie('userId', user._id, { maxAge: period, httpOnly: true })
         res.status(200).json({
+          data: {
           success: true,
           message: 'User Login Successfully',
           user,
           token
+          }
         })
       }
     )
@@ -136,7 +139,7 @@ export const forgetPassword = async (req, res) => {
       resetLink: link
     }    
     await sendEmail(email, text, subject, template, context)
-    res.status(200).json({success: true, message: "Reset link successfully sent, kindly check your email to set a new password"})
+    res.status(200).json({data : {success: true, message: "Reset link successfully sent, kindly check your email to set a new password"}})
   }
   catch(error){
     handleErrors(error, res)
@@ -151,7 +154,7 @@ try {
     return res.status(404).json({success: false, message: "User does not exists."})
   }
   jwt.verify(token, process.env.SECRET) 
-  res.status(200).json({success: true, message: "Reset password link is valid."})
+  res.status(200).json({data : {success: true, message: "Reset password link is valid."}})
 }
 catch(error){
   handleErrors(error, res)
@@ -173,7 +176,7 @@ export const postResetPassword = async (req, res) => {
       password: hashPassword
     }
   })
-  res.status(201).json({success: true, message: "Password changed successfully"})
+  res.status(201).json({data: {success: true, message: "Password changed successfully"}})
 }
 catch(error){
   handleErrors(error, res)
