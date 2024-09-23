@@ -8,12 +8,14 @@ import helmet from 'helmet'
 import cors from 'cors'
 import morgan from 'morgan'
 import rateLimit from 'express-rate-limit'
+import swaggerUi from 'swagger-ui-express';
+import swaggerFile from './swagger/swagger-output.json' assert { type: 'json' };
 
 const app = express()
-const port = process.env.PORT
+const port = process.env.PORT                                     
 
 // helmet to secure app by setting http response headers
-app.use(helmet());
+app.use(helmet());                                        
 app.use(morgan('tiny'))
 
 let limiter = rateLimit({
@@ -40,9 +42,17 @@ app.use(cors(corsOptions))
 // routes
 app.use('/api/v1/auth', authRoutes)
 
+// Serve Swagger docs on '/api-docs' route
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerFile));
+
 // home
 app.get('/', (req, res) => {
   res.json({success: true, message: 'Backend Connected Successfully'})
+})
+
+// not found
+app.get('*', (req, res) => {
+  res.json({success: false, message: "Request Not found!"})
 })
 
 // error handler
@@ -55,3 +65,4 @@ connectToDB()
 app.listen(port, ()=> {
   console.log(`Server running on port ${port}`)
 })
+
