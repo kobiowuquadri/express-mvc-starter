@@ -1,10 +1,16 @@
 // Authorise User
 import jwt from 'jsonwebtoken'
 
-export const verify = (req, res, next) => {
+export const authorizedUser = (req, res, next) => {
   
     try {
-      const token = req.headers['authorization'].split(' ')[1]
+      const authHeader = req.headers['authorization']
+      // check if the authorization header exists
+      if (!authHeader) {
+        return res.status(401).json({ success: false, message: 'Authorization header is missing!' })
+      }
+
+      const token = authHeader.split(' ')[1]
       // console.log(token)
       if (!token) {
         return res
@@ -17,7 +23,7 @@ export const verify = (req, res, next) => {
         }
         // console.log(decodedToken)
         if (decodedToken) {
-          req.user = decodedToken.id
+          req.user = decodedToken
           next()
         }
       })
@@ -25,4 +31,3 @@ export const verify = (req, res, next) => {
       console.log(err.message)
     }
   }  
-

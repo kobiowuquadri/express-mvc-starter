@@ -11,7 +11,7 @@ const baseUrl = 'https://express-mvc-starter.onrender.com/api/v1/auth'
 export const registerUser = async (req, res) => {
   try {
     const { email, password, phoneNumber } = req.body    
-    console.log(req.body)
+    // console.log(req.body)
 
     const existingUser = await authModel.findOne({ email })
     if (existingUser) {
